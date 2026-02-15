@@ -63,7 +63,8 @@ function EpisodeViewerInner({
     task,
   } = data;
 
-  const [videosReady, setVideosReady] = useState(!videosInfo.length);
+  const hasVideos = videosInfo.length > 0;
+  const [videosReady, setVideosReady] = useState(!hasVideos);
   const [chartsReady, setChartsReady] = useState(false);
   const isLoading = !videosReady || !chartsReady;
 
@@ -235,7 +236,7 @@ function EpisodeViewerInner({
         </div>
 
         {/* Videos */}
-        {videosInfo.length && (
+        {hasVideos && (
           <SimpleVideosPlayer
             videosInfo={videosInfo}
             onVideosReady={() => setVideosReady(true)}

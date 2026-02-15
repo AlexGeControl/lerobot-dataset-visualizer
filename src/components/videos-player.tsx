@@ -70,14 +70,17 @@ export const VideosPlayer = ({
     prevHiddenVideosRef.current = hiddenVideos;
   }, [hiddenVideos, isPlaying, videosInfo, currentTime]);
 
-  // Check video codec support
+  // Check video codec support (AV1 or H.264)
   useEffect(() => {
     const checkCodecSupport = () => {
       const dummyVideo = document.createElement("video");
-      const canPlayVideos = dummyVideo.canPlayType(
+      const canPlayAV1 = dummyVideo.canPlayType(
         'video/mp4; codecs="av01.0.05M.08"',
       );
-      setVideoCodecError(!canPlayVideos);
+      const canPlayH264 = dummyVideo.canPlayType(
+        'video/mp4; codecs="avc1.42E01E"',
+      );
+      setVideoCodecError(!canPlayAV1 && !canPlayH264);
     };
 
     checkCodecSupport();

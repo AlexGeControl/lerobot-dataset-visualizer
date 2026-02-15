@@ -1,11 +1,26 @@
 /**
- * Utility functions for checking dataset version compatibility
+ * Utility functions for checking dataset version compatibility.
+ *
+ * Supports two modes:
+ *   - **Remote** (default): fetches from HuggingFace datasets CDN.
+ *   - **Local**: when LOCAL_DATASET_DIR is set, routes requests through
+ *     the /api/local Next.js API route which reads files from disk.
+ *     Subset prefixes (e.g. VLA_Arena/) are handled transparently.
  */
 
 import { HTTP } from "./constants";
 
-const DATASET_URL =
+// ---------------------------------------------------------------------------
+// Mode detection
+// ---------------------------------------------------------------------------
+const IS_LOCAL = !!process.env.LOCAL_DATASET_DIR;
+const LOCAL_PORT = process.env.PORT || "3000";
+
+const REMOTE_URL =
   process.env.DATASET_URL || "https://huggingface.co/datasets";
+const LOCAL_URL = `http://localhost:${LOCAL_PORT}/api/local`;
+
+const DATASET_URL = IS_LOCAL ? LOCAL_URL : REMOTE_URL;
 
 /**
  * Dataset information structure from info.json
@@ -31,7 +46,7 @@ interface DatasetInfo {
  */
 export async function getDatasetInfo(repoId: string): Promise<DatasetInfo> {
   try {
-    const testUrl = `${DATASET_URL}/${repoId}/resolve/main/meta/info.json`;
+    const testUrl = buildVersionedUrl(repoId, "", "meta/info.json");
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), HTTP.TIMEOUT_MS);
@@ -106,8 +121,17 @@ export async function getDatasetVersion(repoId: string): Promise<string> {
 
 export function buildVersionedUrl(
   repoId: string,
-  version: string,
-  path: string,
+  _version: string,
+  filePath: string,
 ): string {
-  return `${DATASET_URL}/${repoId}/resolve/main/${path}`;
+  if (IS_LOCAL) {
+    // Local API route handles subset prefix detection automatically
+    return `${DATASET_URL}/${repoId}/${filePath}`;
+  }
+  return `${REMOTE_URL}/${repoId}/resolve/main/${filePath}`;
+}
+
+/** Whether the visualizer is running in local-dataset mode. */
+export function isLocalMode(): boolean {
+  return IS_LOCAL;
 }

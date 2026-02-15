@@ -6,7 +6,10 @@ import {
   readParquetAsObjects,
 } from "@/utils/parquetUtils";
 import { pick } from "@/utils/pick";
-import { getDatasetVersion, buildVersionedUrl } from "@/utils/versionUtils";
+import {
+  getDatasetVersion,
+  buildVersionedUrl,
+} from "@/utils/versionUtils";
 import { PADDING, CHART_CONFIG, EXCLUDED_COLUMNS } from "@/utils/constants";
 import {
   processChartDataGroups,
@@ -42,7 +45,7 @@ export async function getEpisodeData(
 
     if (info.video_path === null) {
       throw new Error(
-        "Only videos datasets are supported in this visualizer.\nPlease use Rerun visualizer for images datasets.",
+        "Only video datasets are supported in this visualizer.\nPlease use Rerun visualizer for other dataset types.",
       );
     }
 

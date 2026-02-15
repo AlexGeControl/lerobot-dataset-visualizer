@@ -77,7 +77,13 @@ export const SimpleVideosPlayer = ({
           };
 
           video.addEventListener("timeupdate", handleTimeUpdate);
-          video.addEventListener("loadeddata", handleLoadedData);
+
+          // If already loaded (e.g. from browser cache), fire immediately
+          if (video.readyState >= 2) {
+            handleLoadedData();
+          } else {
+            video.addEventListener("loadeddata", handleLoadedData);
+          }
 
           // Store cleanup
           (video as EnhancedVideoElement)._segmentHandlers = () => {
@@ -94,7 +100,16 @@ export const SimpleVideosPlayer = ({
           };
 
           video.addEventListener("ended", handleEnded);
-          video.addEventListener("canplaythrough", checkReady, { once: true });
+
+          // If the video is already buffered (e.g. from browser cache),
+          // readyState will be >= 4 and canplaythrough won't fire again.
+          if (video.readyState >= 4) {
+            checkReady();
+          } else {
+            video.addEventListener("canplaythrough", checkReady, {
+              once: true,
+            });
+          }
 
           // Store cleanup
           (video as EnhancedVideoElement)._segmentHandlers = () => {

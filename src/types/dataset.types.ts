@@ -7,7 +7,12 @@
 export type DatasetVersion = "v2.0" | "v2.1" | "v3.0";
 
 // Feature data types
-export type FeatureDType = "video" | "float32" | "int32" | "int64" | "bool";
+export type FeatureDType =
+  | "video"
+  | "float32"
+  | "int32"
+  | "int64"
+  | "bool";
 
 // Video-specific feature
 export interface VideoFeature {
@@ -40,7 +45,10 @@ export interface BooleanFeature {
 }
 
 // Discriminated union for all feature types
-export type Feature = VideoFeature | NumericFeature | BooleanFeature;
+export type Feature =
+  | VideoFeature
+  | NumericFeature
+  | BooleanFeature;
 
 // Complete dataset metadata
 export interface DatasetMetadata {

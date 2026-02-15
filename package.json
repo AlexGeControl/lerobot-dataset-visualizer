@@ -14,6 +14,7 @@
     "validate": "bun run type-check && bun run lint && bun run format:check"
   },
   "dependencies": {
+    "apache-arrow": "^21.1.0",
     "hyparquet": "^1.12.1",
     "next": "15.3.6",
     "react": "^19.0.0",
